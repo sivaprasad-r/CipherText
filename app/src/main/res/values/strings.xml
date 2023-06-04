@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">CipherText</string>
+    <string name="menu_home">Home</string>
+    <string name="menu_encrypt_decrypt">Encrypt/Decrypt</string>
+    <string name="menu_me">Me</string>
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+</resources>
