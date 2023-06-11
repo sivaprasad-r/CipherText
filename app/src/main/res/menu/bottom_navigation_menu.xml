@@ -1,11 +1,14 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
         android:id="@+id/navigation_home"
-        android:title="@string/menu_home" />
+        android:title="@string/menu_home"
+        android:icon="@drawable/ic_home" />
     <item
         android:id="@+id/navigation_encrypt_decrypt"
-        android:title="@string/menu_encrypt_decrypt" />
+        android:title="@string/menu_encrypt_decrypt"
+        android:icon="@drawable/ic_encrypt_decrypt" />
     <item
         android:id="@+id/navigation_me"
-        android:title="@string/menu_me" />
+        android:title="@string/menu_me"
+        android:icon="@drawable/ic_me" />
 </menu>
