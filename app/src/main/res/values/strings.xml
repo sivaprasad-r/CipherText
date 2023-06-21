@@ -9,7 +9,7 @@
     <string name="decrypt">Decrypt</string>
     <string name="create_keypair">Create Keypair</string>
     <string name="to">To</string>
-    <string name="type_your_message">Type your message</string>
+    <string name="paste_or_type_your_message">Paste or type your message</string>
     <string name="select_recipient">Select recipient</string>
     <string name="type_your_message_to_decrypt">Type your message to decrypt</string>
 </resources>
