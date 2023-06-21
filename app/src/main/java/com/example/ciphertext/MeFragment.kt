@@ -1,59 +1,68 @@
 package com.example.ciphertext
 
+import android.graphics.Bitmap
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
+import com.google.zxing.BarcodeFormat
+import com.google.zxing.EncodeHintType
+import com.google.zxing.MultiFormatWriter
+import com.google.zxing.WriterException
+import com.google.zxing.common.BitMatrix
+import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel
+import java.util.*
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
-
-/**
- * A simple [Fragment] subclass.
- * Use the [MeFragment.newInstance] factory method to
- * create an instance of this fragment.
- */
 class MeFragment : Fragment() {
-    // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
-        }
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_me, container, false)
+        val view = inflater.inflate(R.layout.fragment_me, container, false)
+
+        // Generate QR code and set it to ImageView
+        val qrCodeImageView: ImageView = view.findViewById(R.id.qrCodeImageView)
+        val qrCodeContent = "Hello, QR Code!"
+        val qrCodeBitmap = generateQRCode(qrCodeContent)
+        qrCodeImageView.setImageBitmap(qrCodeBitmap)
+
+        return view
     }
 
-    companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment MeFragment.
-         */
-        // TODO: Rename and change types and number of parameters
-        @JvmStatic
-        fun newInstance(param1: String, param2: String) =
-            MeFragment().apply {
-                arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
+    private fun generateQRCode(content: String): Bitmap? {
+        val hints = EnumMap<EncodeHintType, Any>(EncodeHintType::class.java)
+        hints[EncodeHintType.CHARACTER_SET] = "UTF-8"
+        hints[EncodeHintType.ERROR_CORRECTION] = ErrorCorrectionLevel.H
+
+        try {
+            val bitMatrix: BitMatrix =
+                MultiFormatWriter().encode(content, BarcodeFormat.QR_CODE, 500, 500, hints)
+            val width = bitMatrix.width
+            val height = bitMatrix.height
+            val pixels = IntArray(width * height)
+            for (y in 0 until height) {
+                val offset = y * width
+                for (x in 0 until width) {
+                    pixels[offset + x] = if (bitMatrix[x, y]) {
+                        // Black pixel
+                        0xFF000000.toInt()
+                    } else {
+                        // White pixel
+                        0xFFFFFFFF.toInt()
+                    }
                 }
             }
+            val qrCodeBitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
+            qrCodeBitmap.setPixels(pixels, 0, width, 0, 0, width, height)
+            return qrCodeBitmap
+        } catch (e: WriterException) {
+            e.printStackTrace()
+        }
+
+        return null
     }
 }

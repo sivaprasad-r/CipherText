@@ -12,4 +12,5 @@
     <string name="paste_or_type_your_message">Paste or type your message</string>
     <string name="select_recipient">Select recipient</string>
     <string name="type_your_message_to_decrypt">Type your message to decrypt</string>
+    <string name="qr_code_image">QR Code Image</string>
 </resources>

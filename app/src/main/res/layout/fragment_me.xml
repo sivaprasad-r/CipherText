@@ -5,12 +5,18 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:padding="16dp"
-    android:gravity="center_vertical|bottom"
-    tools:context=".MeFragment">
+    android:gravity="center">
 
     <!-- Content Views -->
 
-    <!-- Your existing content views here -->
+    <ImageView
+        android:id="@+id/qrCodeImageView"
+        android:layout_width="376dp"
+        android:layout_height="411dp"
+        android:layout_gravity="center"
+        android:background="@drawable/rounded_corner"
+        android:contentDescription="@string/qr_code_image"
+        android:scaleType="centerInside" />
 
     <Button
         android:id="@+id/btnCreateKeypair"
@@ -20,3 +26,4 @@
         android:text="@string/create_keypair" />
 
 </LinearLayout>
+
