@@ -7,6 +7,16 @@
     tools:context=".HomeFragment"
     tools:ignore="ExtraText">
 
+    <TextView
+        android:id="@+id/tvScannedData"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:padding="8dp"
+        android:background="@drawable/rounded_corner"
+        android:textColor="@android:color/black"
+        android:textSize="16sp" />
+
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fab"
         android:layout_width="wrap_content"

@@ -8,6 +8,10 @@ import android.view.ViewGroup
 import com.google.zxing.integration.android.IntentIntegrator
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import android.content.Intent
+import android.content.Context
+import java.io.File
+import android.widget.TextView
+
 
 
 
@@ -38,6 +42,7 @@ class HomeFragment : Fragment() {
     }
 
     // Handle the result of the QR Code scanning
+    @Deprecated("Deprecated in Java")
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
@@ -47,7 +52,12 @@ class HomeFragment : Fragment() {
                 // QR Code scan successful, handle the scanned data
                 val scannedData = result.contents
                 // Process the scanned data as needed
+                val fileName = "scanned_data.txt"
+                val fileContents = scannedData.toByteArray()
+                val file = File(requireContext().filesDir, fileName)
+                file.writeBytes(fileContents)
                 // ...
+
             } else {
                 // QR Code scan cancelled or failed
                 // Handle the cancellation or failure scenario
@@ -55,4 +65,25 @@ class HomeFragment : Fragment() {
             }
         }
     }
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        val tvScannedData: TextView = view.findViewById(R.id.tvScannedData)
+
+        val fileName = "scanned_data.txt"
+        val file = File(requireContext().filesDir, fileName)
+
+        if (file.exists()) {
+            // Read the contents of scanned_data.txt file
+            val fileContents = file.readText(Charsets.UTF_8)
+
+            // Set the contents to the TextView
+            tvScannedData.text = fileContents
+        } else {
+            // File does not exist, handle the scenario accordingly
+            // For example, you can display a message or hide the TextView
+            tvScannedData.visibility = View.GONE
+        }
+    }
+
 }
