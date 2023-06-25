@@ -1,26 +1,26 @@
 package com.example.ciphertext
 
+import com.example.ciphertext.CryptoUtils
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
+import android.widget.EditText
+import java.io.File
 
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
 private const val ARG_PARAM1 = "param1"
 private const val ARG_PARAM2 = "param2"
 
-/**
- * A simple [Fragment] subclass.
- * Use the [EncryptDecryptFragment.newInstance] factory method to
- * create an instance of this fragment.
- */
 class EncryptDecryptFragment : Fragment() {
-    // TODO: Rename and change types of parameters
     private var param1: String? = null
     private var param2: String? = null
+
+    private lateinit var etTextArea: EditText
+    private lateinit var btnEncrypt: Button
+    private lateinit var btnDecrypt: Button
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -34,19 +34,45 @@ class EncryptDecryptFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_encrypt_decrypt, container, false)
+        val view = inflater.inflate(R.layout.fragment_encrypt_decrypt, container, false)
+
+        etTextArea = view.findViewById(R.id.etTextArea)
+        btnEncrypt = view.findViewById(R.id.btnEncrypt)
+        btnDecrypt = view.findViewById(R.id.btnDecrypt)
+
+        btnEncrypt.setOnClickListener {
+            val inputText = etTextArea.text.toString()
+            val encryptedText = encryptText(inputText)
+            etTextArea.setText(encryptedText)
+        }
+
+        btnDecrypt.setOnClickListener {
+            val inputText = etTextArea.text.toString()
+            val decryptedText = decryptText(inputText)
+            etTextArea.setText(decryptedText)
+        }
+
+        return view
     }
+
+    private fun encryptText(text: String): String {
+        val inputText = text.toByteArray()
+        val fileName = "publicKey.txt"
+        val file = File(requireContext().filesDir, fileName)
+        val publicKey = file.readText(Charsets.UTF_8).toByteArray()
+        val encryptedText = CryptoUtils.encryptData(publicKey, inputText)
+        return encryptedText.toString()
+    }
+
+    private fun decryptText(text: String): String {
+        val cipherText = text.toByteArray()
+        val storedPrivateKey = CryptoUtils.retrievePrivateKey().toString()
+        val privateKey = storedPrivateKey.toByteArray()
+        val decryptedText = CryptoUtils.decryptData(privateKey, cipherText)
+        return decryptedText.toString()
+    }
+
     companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment EncryptDecryptFragment.
-         */
-        // TODO: Rename and change types and number of parameters
         @JvmStatic
         fun newInstance(param1: String, param2: String) =
             EncryptDecryptFragment().apply {
