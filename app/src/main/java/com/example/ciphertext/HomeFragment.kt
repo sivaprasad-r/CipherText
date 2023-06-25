@@ -65,6 +65,7 @@ class HomeFragment : Fragment() {
             }
         }
     }
+    //Read and display the content of file
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 

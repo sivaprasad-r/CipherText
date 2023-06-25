@@ -1,10 +1,12 @@
 package com.example.ciphertext
 
+import com.example.ciphertext.CryptoUtils
 import android.graphics.Bitmap
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
+import android.widget.Button
 import android.view.ViewGroup
 import android.widget.ImageView
 import com.google.zxing.BarcodeFormat
@@ -14,9 +16,12 @@ import com.google.zxing.WriterException
 import com.google.zxing.common.BitMatrix
 import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel
 import java.util.*
+import java.io.File
+
 
 class MeFragment : Fragment() {
 
+    private lateinit var qrCodeImageView: ImageView
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -24,14 +29,36 @@ class MeFragment : Fragment() {
         // Inflate the layout for this fragment
         val view = inflater.inflate(R.layout.fragment_me, container, false)
 
-        // Generate QR code and set it to ImageView
-        val qrCodeImageView: ImageView = view.findViewById(R.id.qrCodeImageView)
-        val qrCodeContent = "Hello, QR Code!"
-        val qrCodeBitmap = generateQRCode(qrCodeContent)
-        qrCodeImageView.setImageBitmap(qrCodeBitmap)
+        qrCodeImageView = view.findViewById(R.id.qrCodeImageView)
+
+        val btnCreateKeypair: Button = view.findViewById(R.id.btnCreateKeypair)
+
+        btnCreateKeypair.setOnClickListener {
+            val publicKey = CryptoUtils.generateKeyPair()
+            val fileName = "publicKey.txt"
+            val fileContents = publicKey.toByteArray()
+            val file = File(requireContext().filesDir, fileName)
+            file.writeBytes(fileContents)
+
+            updateQRCode()
+        }
+
+        updateQRCode()
 
         return view
     }
+
+    private fun updateQRCode() {
+        val fileName = "publicKey.txt"
+        val file = File(requireContext().filesDir, fileName)
+
+        if (file.exists()) {
+            val qrCodeContent = file.readText(Charsets.UTF_8)
+            val qrCodeBitmap = generateQRCode(qrCodeContent)
+            qrCodeImageView.setImageBitmap(qrCodeBitmap)
+        }
+    }
+
 
     private fun generateQRCode(content: String): Bitmap? {
         val hints = EnumMap<EncodeHintType, Any>(EncodeHintType::class.java)
@@ -40,7 +67,7 @@ class MeFragment : Fragment() {
 
         try {
             val bitMatrix: BitMatrix =
-                MultiFormatWriter().encode(content, BarcodeFormat.QR_CODE, 500, 500, hints)
+                MultiFormatWriter().encode(content, BarcodeFormat.QR_CODE, 1000, 1000, hints)
             val width = bitMatrix.width
             val height = bitMatrix.height
             val pixels = IntArray(width * height)
