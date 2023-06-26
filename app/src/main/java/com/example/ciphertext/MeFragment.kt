@@ -34,12 +34,17 @@ class MeFragment : Fragment() {
         val btnCreateKeypair: Button = view.findViewById(R.id.btnCreateKeypair)
 
         btnCreateKeypair.setOnClickListener {
-            val publicKey = CryptoUtils.generateKeyPair()
-            val fileName = "publicKey.txt"
-            val fileContents = publicKey.toByteArray()
-            val file = File(requireContext().filesDir, fileName)
-            file.writeBytes(fileContents)
+            val keyPairData = CryptoUtils.generateKeyPair()
+            val publicKey = keyPairData.publicKey
+            val privateKey = keyPairData.privateKey
 
+            // Save public key to publicKey.txt
+            val publicKeyFile = File(requireContext().filesDir, "publicKey.txt")
+            publicKeyFile.writeText(publicKey)
+
+            // Save private key to privateKey.txt
+            val privateKeyFile = File(requireContext().filesDir, "privateKey.txt")
+            privateKeyFile.writeText(privateKey)
             updateQRCode()
         }
 

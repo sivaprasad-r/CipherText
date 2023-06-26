@@ -57,7 +57,7 @@ class EncryptDecryptFragment : Fragment() {
 
     private fun encryptText(text: String): String {
         val inputText = text.toByteArray()
-        val fileName = "publicKey.txt"
+        val fileName = "scanned_data.txt"
         val file = File(requireContext().filesDir, fileName)
         val publicKey = file.readText(Charsets.UTF_8).toByteArray()
         val encryptedText = CryptoUtils.encryptData(publicKey, inputText)
@@ -66,8 +66,9 @@ class EncryptDecryptFragment : Fragment() {
 
     private fun decryptText(text: String): String {
         val cipherText = text.toByteArray()
-        val storedPrivateKey = CryptoUtils.retrievePrivateKey().toString()
-        val privateKey = storedPrivateKey.toByteArray()
+        val fileName = "privateKey.txt"
+        val file = File(requireContext().filesDir, fileName)
+        val privateKey = file.readText(Charsets.UTF_8).toByteArray()
         val decryptedText = CryptoUtils.decryptData(privateKey, cipherText)
         return decryptedText.toString()
     }
