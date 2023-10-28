@@ -1,6 +1,5 @@
 package com.example.ciphertext
 
-import com.example.ciphertext.CryptoUtils
 import android.graphics.Bitmap
 import android.os.Bundle
 import androidx.fragment.app.Fragment
@@ -35,8 +34,9 @@ class MeFragment : Fragment() {
 
         btnCreateKeypair.setOnClickListener {
             val keyPairData = CryptoUtils.generateKeyPair()
-            val publicKey = keyPairData.publicKey
-            val privateKey = keyPairData.privateKey
+            val publicKey = keyPairData.publicKeyHex
+            val privateKey = keyPairData.privateKeyHex
+            val nonce = keyPairData.nonceHex
 
             // Save public key to publicKey.txt
             val publicKeyFile = File(requireContext().filesDir, "publicKey.txt")
@@ -46,6 +46,9 @@ class MeFragment : Fragment() {
             val privateKeyFile = File(requireContext().filesDir, "privateKey.txt")
             privateKeyFile.writeText(privateKey)
             updateQRCode()
+
+            val nonceFile = File(requireContext().filesDir, "nonce.txt")
+            nonceFile.writeText(nonce)
         }
 
         updateQRCode()

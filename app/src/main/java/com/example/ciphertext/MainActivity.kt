@@ -4,10 +4,6 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import com.google.android.material.bottomnavigation.BottomNavigationView
-import com.example.ciphertext.HomeFragment
-import com.example.ciphertext.EncryptDecryptFragment
-import com.example.ciphertext.MeFragment
-import com.example.ciphertext.R
 
 
 class MainActivity : AppCompatActivity() {

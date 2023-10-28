@@ -8,7 +8,6 @@ import android.view.ViewGroup
 import com.google.zxing.integration.android.IntentIntegrator
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import android.content.Intent
-import android.content.Context
 import java.io.File
 import android.widget.TextView
 

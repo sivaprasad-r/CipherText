@@ -1,40 +1,45 @@
 package com.example.ciphertext
 
 import org.libsodium.jni.Sodium
-import org.libsodium.jni.crypto.Random
-import org.libsodium.jni.keys.KeyPair
-import org.libsodium.jni.SodiumConstants
-
-
 object CryptoUtils {
 
-    private const val ANDROID_KEYSTORE_PROVIDER = "AndroidKeyStore"
-    private const val KEY_ALIAS = "my_key_alias"
+    data class KeyPairData(val publicKeyHex: String, val privateKeyHex: String, val nonceHex: String)
 
-    data class KeyPairData(val publicKey: String, val privateKey: String)
-
-    fun generateKeyPair(): KeyPairData {
-        val seed = Random().randomBytes(SodiumConstants.SECRETKEY_BYTES)
-        val encryptionKeyPair = KeyPair(seed)
-        val privateKey = encryptionKeyPair.privateKey.toString()
-        val publicKey = encryptionKeyPair.publicKey.toString()
-        return KeyPairData(publicKey, privateKey)
+    private fun ByteArray.toHexString(): String {
+        return joinToString("") { "%02x".format(it) }
     }
 
-    fun encryptData(publicKey: ByteArray, data: ByteArray): ByteArray {
-        val nonce = Random().randomBytes(SodiumConstants.NONCE_BYTES)
+    fun generateKeyPair(): KeyPairData {
+        val privateKey = ByteArray(Sodium.crypto_box_secretkeybytes())
+        val publicKey = ByteArray(Sodium.crypto_box_publickeybytes())
+
+        Sodium.crypto_box_keypair(publicKey, privateKey)
+
+        val nonce = ByteArray(Sodium.crypto_box_noncebytes())
+
+        Sodium.randombytes_buf(nonce, nonce.size)
+
+        val publicKeyHex = publicKey.toHexString()
+        val privateKeyHex = privateKey.toHexString()
+        val nonceHex = nonce.toHexString()
+
+        return KeyPairData(publicKeyHex, privateKeyHex, nonceHex)
+    }
+
+    fun encryptData(data: ByteArray ,nonce: ByteArray ,destPublicKey: ByteArray, privateKey: ByteArray): ByteArray {
+
         val encryptedData = ByteArray(data.size + Sodium.crypto_box_macbytes())
 
-        Sodium.crypto_box_seal(encryptedData, data, data.size, publicKey)
+        Sodium.crypto_box_easy(encryptedData, data, data.size, nonce ,destPublicKey, privateKey)
 
         return encryptedData
     }
 
-    fun decryptData(privateKey: ByteArray, encryptedData: ByteArray): ByteArray {
-        val decryptedData = ByteArray(encryptedData.size - Sodium.crypto_box_macbytes())
-        val nonce = ByteArray(Sodium.crypto_box_noncebytes())
+    fun decryptData(encryptedData: ByteArray, nonce: ByteArray, destPublicKey: ByteArray, privateKey: ByteArray): ByteArray {
 
-        Sodium.crypto_box_seal_open(decryptedData, encryptedData, encryptedData.size.toInt(), nonce, privateKey)
+        val decryptedData = ByteArray(encryptedData.size - Sodium.crypto_box_macbytes())
+
+        Sodium.crypto_box_open_easy(decryptedData, encryptedData, encryptedData.size, nonce, destPublicKey, privateKey)
 
         return decryptedData
     }
